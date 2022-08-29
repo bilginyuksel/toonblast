@@ -15,23 +15,22 @@ public class CubeInteractor implements Interactor {
     @Override
     public List<Element> interact(Element element) {
         var origin = grid.get(element);
-        var cubes = new ArrayList<Element>();
-        findAdjacentIdenticalCubes(cubes, new HashSet<>(), element, origin);
 
-        return cubes;
+        return findAdjacentCubes(new HashSet<>(), element, origin);
     }
 
-    public void findAdjacentIdenticalCubes(List<Element> cubes, Set<Grid.Coordinate> visited, Element interactionStarter, Grid.Coordinate origin) {
+    public List<Element> findAdjacentCubes(Set<Grid.Coordinate> visited, Element interactionStarter, Grid.Coordinate origin) {
         if (visited.contains(origin) || !grid.valid(origin) || Objects.equals(interactionStarter, grid.get(origin))) {
-            return;
+            return Collections.emptyList();
         }
 
         visited.add(origin);
-        cubes.add(grid.get(origin));
 
-        findAdjacentIdenticalCubes(cubes, visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x - 1, origin.y));
-        findAdjacentIdenticalCubes(cubes, visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x + 1, origin.y));
-        findAdjacentIdenticalCubes(cubes, visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x, origin.y - 1));
-        findAdjacentIdenticalCubes(cubes, visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x, origin.y + 1));
+        var elements = new ArrayList<Element>();
+        elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x - 1, origin.y)));
+        elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x + 1, origin.y)));
+        elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x, origin.y - 1)));
+        elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x, origin.y + 1)));
+        return elements;
     }
 }
