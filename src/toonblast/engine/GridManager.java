@@ -23,9 +23,5 @@ public class GridManager extends MonoBehavior {
 
     public void onClick(UnityGrid unityGrid) {
         var variantId = unityGrid.getVariantId();
-
-        var interactor = InteractorFactory.getInteractor(grid, variantId);
-        var interactions = interactor.interact(null);
-        System.out.println(interactions);
     }
 }

@@ -1,9 +1,9 @@
 package toonblast.element;
 
-public class Bomb extends Element implements Interactable {
+public class Rocket extends Element implements Interactable {
     private final int direction;
 
-    public Bomb(int direction) {
+    public Rocket(int direction) {
         super(2);
 
         this.direction = direction;
