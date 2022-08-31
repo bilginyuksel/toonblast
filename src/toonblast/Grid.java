@@ -2,9 +2,7 @@ package toonblast;
 
 import toonblast.element.Element;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Grid {
     public static class Coordinate {
@@ -18,6 +16,19 @@ public class Grid {
 
         public static Coordinate newCoordinate(int x, int y) {
             return new Coordinate(x, y);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Coordinate that = (Coordinate) o;
+            return x == that.x && y == that.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
         }
     }
 
@@ -49,8 +60,8 @@ public class Grid {
     /**
      * Apply gravity to the whole grid to move pieces downwards
      */
-    public void applyGravity() {
-
+    public List<Element> applyGravity() {
+        return Collections.emptyList();
     }
 
     public void removeAll(List<Element> elements) {
