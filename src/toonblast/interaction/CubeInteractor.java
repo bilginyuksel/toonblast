@@ -2,6 +2,7 @@ package toonblast.interaction;
 
 import toonblast.element.Element;
 import toonblast.Grid;
+import toonblast.element.Explosive;
 
 import java.util.*;
 
@@ -19,18 +20,31 @@ public class CubeInteractor implements Interactor {
         return findAdjacentCubes(new HashSet<>(), element, origin);
     }
 
-    public List<Element> findAdjacentCubes(Set<Grid.Coordinate> visited, Element interactionStarter, Grid.Coordinate origin) {
-        if (visited.contains(origin) || !grid.valid(origin) || Objects.equals(interactionStarter, grid.get(origin))) {
+    private List<Element> findAdjacentCubes(Set<Grid.Coordinate> visited, Element interactionStarter, Grid.Coordinate origin) {
+        if (notValid(origin, interactionStarter, visited)) {
             return Collections.emptyList();
         }
 
         visited.add(origin);
 
-        var elements = new ArrayList<Element>();
+        var elements = new ArrayList<>(Collections.singletonList(grid.get(origin)));
+
         elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x - 1, origin.y)));
         elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x + 1, origin.y)));
         elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x, origin.y - 1)));
         elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x, origin.y + 1)));
         return elements;
     }
+
+    private boolean notValid(Grid.Coordinate origin, Element interactionStarter, Set<Grid.Coordinate> visited) {
+        if (!grid.valid(origin) || visited.contains(origin)) {
+            return true;
+        }
+
+        var compareTo = grid.get(origin);
+        var isEqualOrExplosive = Objects.equals(interactionStarter, compareTo) || compareTo instanceof Explosive;
+
+        return !isEqualOrExplosive;
+    }
+
 }
