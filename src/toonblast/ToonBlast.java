@@ -20,7 +20,7 @@ public class ToonBlast {
         this.grid = new Grid(elements);
     }
 
-    public void play(Element element) {
+    public void blast(Element element) {
         if (!(element instanceof Interactable)) {
             return;
         }
@@ -54,5 +54,9 @@ public class ToonBlast {
 
     private void applyExplosionSideEffects(List<Element> interactions) {
 
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
 }

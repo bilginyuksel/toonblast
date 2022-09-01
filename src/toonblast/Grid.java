@@ -78,4 +78,8 @@ public class Grid {
 
         return coordinateMap;
     }
+
+    public Element[][] getToonBlastGrid() {
+        return toonBlastGrid;
+    }
 }
