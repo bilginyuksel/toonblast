@@ -39,7 +39,7 @@ public class BasicRenderer {
         if (e instanceof Cube)
             renderCube((Cube) e);
         else if (e instanceof Bomb)
-            renderBomb();
+            renderBomb((Bomb) e);
         else if (e instanceof Rocket)
             renderRocket((Rocket) e);
         else if (e instanceof ExplosiveToon)
@@ -50,8 +50,8 @@ public class BasicRenderer {
         System.out.print(" " + "C-" + c.getColor());
     }
 
-    private void renderBomb() {
-        System.out.println(" " + "B");
+    private void renderBomb(Bomb b) {
+        System.out.print(" " + "B-" + b.getVariantId());
     }
 
     private void renderRocket(Rocket r) {
