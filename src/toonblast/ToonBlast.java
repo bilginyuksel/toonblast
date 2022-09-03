@@ -59,4 +59,8 @@ public class ToonBlast {
     public Grid getGrid() {
         return grid;
     }
+
+    public ToonBlastGameState getGameState() {
+        return gameState;
+    }
 }

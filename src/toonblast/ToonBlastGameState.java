@@ -2,6 +2,9 @@ package toonblast;
 
 import java.util.Map;
 
+// TODO: toonblast game state should be constructed in ToonBlast class
+// because every game will have a new state and moves or the elements
+// could be initiated with some config
 public class ToonBlastGameState {
     private final GameOver gameOver;
     private int remainingMoveCount;
@@ -30,5 +33,13 @@ public class ToonBlastGameState {
         if (--remainingMoveCount <= 0) {
             gameOver.over(false);
         }
+    }
+
+    public int getRemainingMoveCount() {
+        return remainingMoveCount;
+    }
+
+    public Map<Integer, Integer> getGoals() {
+        return goals;
     }
 }

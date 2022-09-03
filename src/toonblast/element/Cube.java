@@ -16,4 +16,8 @@ public class Cube extends Element implements Interactable {
         Cube cube = (Cube) o;
         return color == cube.color;
     }
+
+    public int getColor() {
+        return color;
+    }
 }
