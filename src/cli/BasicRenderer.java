@@ -1,37 +1,56 @@
 package cli;
 
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
 import toonblast.Grid;
 import toonblast.ToonBlast;
 import toonblast.ToonBlastGameState;
 import toonblast.element.*;
 
+import java.io.IOException;
+
 public class BasicRenderer {
+    private final Terminal terminal;
+
+    public BasicRenderer() {
+        var terminalFactory = new DefaultTerminalFactory();
+        try {
+            this.terminal = terminalFactory.createTerminal();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void render(ToonBlast toonBlast) {
+        setTerminalCursorPositionTopLeft();
+
         renderPanel(toonBlast.getGameState());
         renderGrid(toonBlast.getGrid());
     }
 
     private void renderPanel(ToonBlastGameState state) {
-        System.out.println("Remaining moves: " + state.getRemainingMoveCount());
-        System.out.println("Remaining goals by variant: " + state.getGoals());
+        writeString("Remaining moves: " + state.getRemainingMoveCount());
+        writeLineEnd();
+        writeString("Remaining goals by variant: " + state.getGoals());
+        writeLineEnd();
     }
 
     private void renderGrid(Grid grid) {
         var toonBlastGrid = grid.getToonBlastGrid();
 
-        System.out.print("     ");
+        writeString("     ");
         for (int i = 0; i < toonBlastGrid[0].length; i++) {
-            System.out.print("y" + i + ". ");
+            writeString("y" + i + ". ");
         }
-        System.out.println();
+        writeLineEnd();
 
         var axis = 0;
         for (Element[] elements : toonBlastGrid) {
-            System.out.print("x" + axis++ + ". ");
+            writeString("x" + axis++ + ". ");
             for (Element element : elements) {
                 renderElement(element);
             }
-            System.out.println();
+            writeLineEnd();
         }
     }
 
@@ -47,19 +66,45 @@ public class BasicRenderer {
     }
 
     private void renderCube(Cube c) {
-        System.out.print(" " + "C-" + c.getColor());
+        writeString(" " + "C-" + c.getColor());
     }
 
     private void renderBomb(Bomb b) {
-        System.out.print(" " + "B-" + b.getVariantId());
+        writeString(" " + "B-" + b.getVariantId());
     }
 
     private void renderRocket(Rocket r) {
-        System.out.print(" " + "R-" + r.getDirection());
+        writeString(" " + "R-" + r.getDirection());
     }
 
     private void renderExplosiveToon(ExplosiveToon et) {
-        System.out.print(" " + "ET" + et.getVariantId());
+        writeString(" " + "ET" + et.getVariantId());
     }
 
+    private void writeString(String s) {
+        try {
+            for (char character : s.toCharArray()) {
+                terminal.putCharacter(character);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Terminal put character doesn't work");
+        }
+    }
+
+    private void writeLineEnd() {
+        try {
+            terminal.putCharacter('\n');
+            terminal.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("Terminal flush doesn't work");
+        }
+    }
+
+    private void setTerminalCursorPositionTopLeft() {
+        try {
+            terminal.setCursorPosition(0, 0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
