@@ -1,5 +1,7 @@
 package cli;
 
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
 import toonblast.Engine;
 import toonblast.GameOver;
 import toonblast.ToonBlast;
@@ -10,11 +12,13 @@ import toonblast.element.ExplosiveToon;
 import toonblast.element.Rocket;
 import toonblast.interaction.InteractorFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 public class ToonBlastGame implements GameOver, Engine {
     private final ToonBlast toonBlast;
     private final BasicRenderer basicRenderer;
+    private final Terminal terminal;
 
     public ToonBlastGame() {
         var interactorFactory = new InteractorFactory();
@@ -22,7 +26,71 @@ public class ToonBlastGame implements GameOver, Engine {
 
         var randomElements = generateRandomElements(10, 10, 3, 7);
         toonBlast = new ToonBlast(interactorFactory, this, toonBlastGameState, randomElements);
-        basicRenderer = new BasicRenderer();
+
+        var terminalFactory = new DefaultTerminalFactory();
+        try {
+            terminal = terminalFactory.createTerminal();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        basicRenderer = new BasicRenderer(terminal);
+    }
+
+    public void start() {
+        class GameThread extends Thread {
+            @Override
+            public void run() {
+                //noinspection InfiniteLoopStatement
+                while (true) {
+                    run(1000);
+                }
+            }
+
+            private void run(long millis) {
+                try {
+                    sleep(millis);
+                    update();
+                    System.out.println("Screen updated...");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        class InputThread extends Thread {
+            private final List<Character> input = new ArrayList<>();
+
+            @Override
+            public void run() {
+                //noinspection InfiniteLoopStatement
+                while (true) {
+                    readTerminalInput();
+                }
+            }
+
+            private void readTerminalInput() {
+                try {
+                    var stroke = terminal.readInput();
+                    System.out.println("Input captured, stroke= " + stroke.getCharacter());
+                    if (stroke.getCharacter() == ' ') {
+                        System.out.println(input);
+                        input.clear();
+                        return;
+                    }
+
+                    input.add(stroke.getCharacter());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        var gameThread = new GameThread();
+        var inputThread = new InputThread();
+
+        gameThread.start();
+        inputThread.start();
     }
 
     public void update() {

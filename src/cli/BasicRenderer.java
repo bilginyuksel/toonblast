@@ -1,6 +1,5 @@
 package cli;
 
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import toonblast.Grid;
 import toonblast.ToonBlast;
@@ -12,13 +11,8 @@ import java.io.IOException;
 public class BasicRenderer {
     private final Terminal terminal;
 
-    public BasicRenderer() {
-        var terminalFactory = new DefaultTerminalFactory();
-        try {
-            this.terminal = terminalFactory.createTerminal();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public BasicRenderer(Terminal terminal) {
+        this.terminal = terminal;
     }
 
     public void render(ToonBlast toonBlast) {
