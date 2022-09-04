@@ -22,6 +22,11 @@ public class ToonBlastGameState {
     }
 
     public void updateToonBlastState(int variantId, int blastedVariantCount) {
+        if (!goals.containsKey(variantId)) {
+            System.out.println("Blasted variant doesn't exist");
+            return;
+        }
+
         var currentGoalCount = goals.get(variantId);
         goals.put(variantId, currentGoalCount - blastedVariantCount);
         overallGoalsCount -= currentGoalCount;

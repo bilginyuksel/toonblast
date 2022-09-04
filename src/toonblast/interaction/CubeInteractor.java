@@ -27,7 +27,13 @@ public class CubeInteractor implements Interactor {
 
         visited.add(origin);
 
-        var elements = new ArrayList<>(Collections.singletonList(grid.get(origin)));
+        var element = grid.get(origin);
+        var elements = new ArrayList<>(Collections.singletonList(element));
+
+        // Do not look for neighbors if the element is explosive
+        if (element instanceof Explosive) {
+            return elements;
+        }
 
         elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x - 1, origin.y)));
         elements.addAll(findAdjacentCubes(visited, interactionStarter, Grid.Coordinate.newCoordinate(origin.x + 1, origin.y)));
