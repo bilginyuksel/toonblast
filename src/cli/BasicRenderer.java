@@ -57,6 +57,8 @@ public class BasicRenderer {
             renderRocket((Rocket) e);
         else if (e instanceof ExplosiveToon)
             renderExplosiveToon((ExplosiveToon) e);
+        else
+            renderEmptyElement();
     }
 
     private void renderCube(Cube c) {
@@ -73,6 +75,10 @@ public class BasicRenderer {
 
     private void renderExplosiveToon(ExplosiveToon et) {
         writeString(" " + "ET" + et.getVariantId());
+    }
+
+    private void renderEmptyElement() {
+        writeString(" NIL");
     }
 
     private void writeString(String s) {

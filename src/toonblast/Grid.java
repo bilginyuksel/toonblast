@@ -40,7 +40,6 @@ public class Grid {
         this.toonBlastGridCoordinateMap = buildToonBlastCoordinateMap(toonBlastGrid);
     }
 
-
     public Element get(Coordinate c) {
         return toonBlastGrid[c.x][c.y];
     }
@@ -64,8 +63,18 @@ public class Grid {
         return Collections.emptyList();
     }
 
-    public void removeAll(List<Element> elements) {
+    /**
+     * Spawns new elements if there are empty cells on the 0th X axis
+     */
+    public void spawnElements() {
 
+    }
+
+    public void removeAll(List<Element> elements) {
+        for (Element e : elements) {
+            var coordinate = toonBlastGridCoordinateMap.remove(e);
+            toonBlastGrid[coordinate.x][coordinate.y] = null;
+        }
     }
 
     private Map<Element, Coordinate> buildToonBlastCoordinateMap(Element[][] toonBlastGrid) {
