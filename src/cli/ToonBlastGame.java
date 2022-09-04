@@ -22,7 +22,9 @@ public class ToonBlastGame implements GameOver, Engine {
 
     public ToonBlastGame() {
         var interactorFactory = new InteractorFactory();
-        var toonBlastGameState = new ToonBlastGameState(this, 10, Map.of(5, 7));
+        var gameGoals = new HashMap<Integer, Integer>();
+        gameGoals.put(5, 7);
+        var toonBlastGameState = new ToonBlastGameState(this, 10, gameGoals);
 
         var randomElements = generateRandomElements(10, 10, 3, 7);
         toonBlast = new ToonBlast(interactorFactory, this, toonBlastGameState, randomElements);
@@ -69,12 +71,26 @@ public class ToonBlastGame implements GameOver, Engine {
                 }
             }
 
+            private boolean isInputValid() {
+                var toonBlastGrid = toonBlast.getGrid().getToonBlastGrid();
+                var isXLengthSmaller = (input.get(0) - '0') < toonBlastGrid.length;
+                var isYLengthSmaller = (input.get(1) - '0') < toonBlastGrid[0].length;
+
+                return input.size() == 2 && isXLengthSmaller && isYLengthSmaller;
+            }
+
             private void readTerminalInput() {
                 try {
                     var stroke = terminal.readInput();
                     System.out.println("Input captured, stroke= " + stroke.getCharacter());
                     if (stroke.getCharacter() == ' ') {
-                        System.out.println(input);
+                        if (isInputValid()) {
+                            var x = input.get(0) - '0';
+                            var y = input.get(1) - '0';
+                            play(toonBlast.getGrid().getToonBlastGrid()[x][y]);
+                        } else {
+                            System.out.println("Invalid input: " + input);
+                        }
                         input.clear();
                         return;
                     }
@@ -98,6 +114,7 @@ public class ToonBlastGame implements GameOver, Engine {
     }
 
     public void play(Element e) {
+        System.out.println("Play called for element: " + e.getVariantId());
         toonBlast.blast(e);
     }
 
