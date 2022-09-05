@@ -34,10 +34,12 @@ public class Grid {
 
     private final Map<Element, Coordinate> toonBlastGridCoordinateMap;
     private final Element[][] toonBlastGrid;
+    private final ToonBlastElementPool elementPool;
 
-    public Grid(Element[][] toonBlastGrid) {
+    public Grid(Element[][] toonBlastGrid, ToonBlastElementPool pool) {
         this.toonBlastGrid = toonBlastGrid;
         this.toonBlastGridCoordinateMap = buildToonBlastCoordinateMap(toonBlastGrid);
+        this.elementPool = pool;
     }
 
     public Element get(Coordinate c) {
@@ -58,16 +60,56 @@ public class Grid {
 
     /**
      * Apply gravity to the whole grid to move pieces downwards
+     * Return pieces which are on the ground (ending row of the grid)
      */
     public List<Element> applyGravity() {
+        for (int i = toonBlastGrid.length - 1; i >= 0; i--) {
+            for (int j = toonBlastGrid[i].length - 1; j >= 0; j--) {
+                if (toonBlastGrid[i][j] != null) {
+                    moveElementToBottom(i, j);
+                }
+            }
+        }
+
         return Collections.emptyList();
+    }
+
+    private void moveElementToBottom(int i, int j) {
+        for (int k = i + 1; k < toonBlastGrid.length; k++) {
+            if (toonBlastGrid[k][j] != null) {
+                break;
+            }
+
+            toonBlastGrid[k][j] = toonBlastGrid[k - 1][j];
+            toonBlastGrid[k - 1][j] = null;
+            toonBlastGridCoordinateMap.computeIfPresent(toonBlastGrid[k][j], (element, coordinate) -> {
+                coordinate.x++;
+                return coordinate;
+            });
+        }
     }
 
     /**
      * Spawns new elements if there are empty cells on the 0th X axis
      */
     public void spawnElements() {
+        Optional<Coordinate> c;
+        while ((c = findFirstNullOnFirstRow()).isPresent()) {
+            var coordinate = c.get();
+            toonBlastGrid[coordinate.x][coordinate.y] = elementPool.spawn();
+            toonBlastGridCoordinateMap.put(toonBlastGrid[coordinate.x][coordinate.y], coordinate);
+            moveElementToBottom(coordinate.x, coordinate.y);
+        }
+    }
 
+    private Optional<Coordinate> findFirstNullOnFirstRow() {
+        for (int i = 0; i < toonBlastGrid[0].length; i++) {
+            if (toonBlastGrid[0][i] == null) {
+                return Optional.of(Coordinate.newCoordinate(0, i));
+            }
+        }
+
+        return Optional.empty();
     }
 
     public void removeAll(List<Element> elements) {

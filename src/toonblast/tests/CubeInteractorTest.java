@@ -27,7 +27,7 @@ class CubeInteractorTest {
                 {new Cube(1), new Cube(1)},
                 {new Cube(1), new Cube(2)}
         };
-        var sampleGrid = new Grid(elements);
+        var sampleGrid = new Grid(elements, null);
 
         var interactor = new CubeInteractor(sampleGrid);
         var neighbors = interactor.interact(elements[0][1]);

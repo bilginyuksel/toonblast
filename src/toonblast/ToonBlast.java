@@ -1,12 +1,14 @@
 package toonblast;
 
+import toonblast.element.Cube;
 import toonblast.element.Element;
 import toonblast.element.Interactable;
+import toonblast.element.Toon;
 import toonblast.interaction.InteractorFactory;
 
 import java.util.List;
 
-public class ToonBlast {
+public class ToonBlast implements ToonBlastElementPool {
     private final ToonBlastGameState gameState;
     private final InteractorFactory interactorFactory;
     private final Grid grid;
@@ -17,7 +19,7 @@ public class ToonBlast {
         this.engine = engine;
         this.gameState = gameState;
 
-        this.grid = new Grid(elements);
+        this.grid = new Grid(elements, this);
     }
 
     public void blast(Element element) {
@@ -29,11 +31,16 @@ public class ToonBlast {
         var interactions = interactor.interact(element);
 
         explode(interactions);
-        applyExplosionSideEffects(interactions);
+        var rigidToonList = applyGravity();
+        grid.spawnElements();
 
-        var heavyObjects = grid.applyGravity();
+        updateGameState(interactions, rigidToonList);
+    }
 
-        updateGameState(interactions, heavyObjects);
+    private List<Element> applyGravity() {
+        var elementsOnGround = grid.applyGravity();
+
+        return elementsOnGround.stream().filter(e -> e instanceof Toon).toList();
     }
 
     private void explode(List<Element> interactions) {
@@ -52,15 +59,16 @@ public class ToonBlast {
         }
     }
 
-    private void applyExplosionSideEffects(List<Element> interactions) {
-
-    }
-
     public Grid getGrid() {
         return grid;
     }
 
     public ToonBlastGameState getGameState() {
         return gameState;
+    }
+
+    @Override
+    public Element spawn() {
+        return new Cube(3);
     }
 }
