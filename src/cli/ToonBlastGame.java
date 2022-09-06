@@ -164,7 +164,7 @@ public class ToonBlastGame implements GameOver, Engine {
         for (int i = 0; i < rocketCount; i++) {
             var tuple = listOfPotentialCoordinates.get(++lastAvailableCoordinateIdx);
             // direction for rocket could be 1 or 0
-            elements[tuple.x][tuple.y] = new Rocket(r.nextInt(2));
+            elements[tuple.x][tuple.y] = new Rocket(Rocket.Direction.getRandomDirection());
         }
 
         for (int i = 0; i < explosiveToonCount; i++) {

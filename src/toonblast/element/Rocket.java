@@ -1,15 +1,35 @@
 package toonblast.element;
 
-public class Rocket extends Element implements Interactable {
-    private final int direction;
+import java.util.Random;
 
-    public Rocket(int direction) {
+public class Rocket extends Element implements Interactable {
+    public enum Direction {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN;
+
+        private final static Random random = new Random();
+
+        public static Direction getRandomDirection() {
+            return switch (random.nextInt(4)) {
+                case 0 -> LEFT;
+                case 1 -> RIGHT;
+                case 2 -> UP;
+                default -> DOWN;
+            };
+        }
+    }
+
+    private final Direction direction;
+
+    public Rocket(Direction direction) {
         super(2);
 
         this.direction = direction;
     }
 
-    public int getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 }

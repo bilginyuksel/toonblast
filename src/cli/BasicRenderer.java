@@ -70,7 +70,7 @@ public class BasicRenderer {
     }
 
     private void renderRocket(Rocket r) {
-        writeString(" " + "R-" + r.getDirection());
+        writeString(" " + "R-" + r.getDirection().toString().charAt(0));
     }
 
     private void renderExplosiveToon(ExplosiveToon et) {
